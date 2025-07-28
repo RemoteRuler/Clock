@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-content-container">
+        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        <h2>Your Location</h2>
+        <div class="location-display">
+            <p>Latitude: <span id="latitude-display">N/A</span></p>
+            <p>Longitude: <span id="longitude-display">N/A</span></p>
+            <p>Accuracy: <span id="accuracy-display">N/A</span> meters</p>
+        </div>
+        <img src="https://www.google.com/images/branding/product/2x/maps_96dp.png" alt="Google Maps Icon" id="google-maps-icon" style="width: 50px; height: 50px; cursor: pointer; margin-top: 10px;">
+        <button id="get-location">Get My Location</button>
+    </div>
+    <script src="location_script.js"></script>
+</body>
+</html>

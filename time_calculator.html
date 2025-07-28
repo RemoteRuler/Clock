@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-content-container">
+        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        <h2>Time Calculator</h2>
+        <div class="time-calculator-controls">
+            <input type="time" id="time-input-1" value="00:00">
+            <select id="operation">
+                <option value="add">+</option>
+                <option value="subtract">-</option>
+            </select>
+            <input type="time" id="time-input-2" value="00:00">
+            <button id="calculate-time">Calculate</button>
+        </div>
+        <div class="time-calculator-result">Result: 00:00</div>
+    </div>
+    <script src="time_calculator_script.js"></script>
+</body>
+</html>
