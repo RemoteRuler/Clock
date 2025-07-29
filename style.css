@@ -31,6 +31,8 @@ body {
     max-width: 90%;
     width: fit-content;
     text-align: center;
+    flex-grow: 1;
+    margin: auto;
 }
 
 .logo {
