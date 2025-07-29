@@ -3,155 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clock Features Hub</title>
+    <title>Remote Ruler - Time Tools Hub</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #2c2c2c;
-            margin: 0;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow-x: hidden;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .hub-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 30px;
-            border-radius: 10px;
-            background: #3a3a3a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            align-items: center;
-        }
-        .hub-container h1 {
-            color: #e0e0e0;
-            margin-bottom: 20px;
-        }
-        .hub-button {
-            background-color: #2C3E50; /* Dark blue from logo */
-            color: #8B0000; /* Dark red text */
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.2em;
-            font-weight: 600;
-            transition: all 0.2s ease-in-out; /* Faster, smoother transition */
-            width: 250px;
-            text-align: center;
-            text-decoration: none; /* Remove underline for links */
-            box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.05); /* Softer, more integrated shadow */
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
-        }
-        .hub-button:hover {
-            background-color: #34495e; /* Slightly lighter dark blue on hover */
-            box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.1); /* More pronounced shadow on hover */
-            transform: translateY(-3px); /* More noticeable lift */
-        }
-        .hub-button:active {
-            transform: translateY(0); /* Press down effect */
-            box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.4), inset -3px -3px 7px rgba(255, 255, 255, 0.1); /* Inset shadow on click */
-        }
-        .logo-hub {
-            width: 100px;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 50%;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="hub-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo-hub">
-        <h1><span id="typing-text"></span></h1>
-        <script>
-            const parts = [
-                { text: "Your Time,", color: "#2C3E50" }, // Button background color
-                { text: " Your Tools.", color: "#8B0000" }  // Button text color
-            ];
-            let currentPartIndex = 0;
-            let charIndexInPart = 0;
-            let isDeleting = false;
-            const speed = 75; // typing speed in milliseconds
-            const deleteSpeed = 50; // deleting speed in milliseconds
-            const pauseBeforeDelete = 1500; // pause before starting to delete
-            const pauseBeforeType = 500; // pause before starting to type again
+    <div class="main-content-container">
+        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        <h2 id="typing-title" class="brand-title"></h2>
+        <p class="subtitle">Your Modern Time Toolkit</p>
+        <div class="hub-container">
+            <a href="clock.html" class="hub-button">Digital Clock</a>
+            <a href="time_calculator.html" class="hub-button">Time Calculator</a>
+            <a href="age_calculator.html" class="hub-button">Age Calculator</a>
+            <a href="dead_calculator.html" class="hub-button">Dead Calculator</a>
+            <a href="location.html" class="hub-button">Location Tracker</a>
+            <a href="salat_times.html" class="hub-button">Salat Times</a>
+        </div>
+    </div>
+    <footer class="copyright-footer">
+        <p>&copy; Remote Ruler. All rights reserved.</p>
+    </footer>
+    <script>
+        const titleElement = document.getElementById('typing-title');
+        const phrases = [
+            { text: 'Welcome to', isComplex: false },
+            { text: 'Remote Ruler', isComplex: true }
+        ];
+        const typingSpeed = 100;
+        const deletingSpeed = 75;
+        const pauseBetweenPhrases = 2000; // Pause after typing/deleting
 
-            function typeWriter() {
-                const currentTextElement = document.getElementById("typing-text");
-                const currentPart = parts[currentPartIndex];
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
 
-                if (isDeleting) {
-                    // Deleting text
-                    if (charIndexInPart > 0) {
-                        charIndexInPart--;
-                        let tempHtml = '';
-                        for (let p = 0; p <= currentPartIndex; p++) {
-                            const part = parts[p];
-                            const textToAppend = (p === currentPartIndex) ? part.text.substring(0, charIndexInPart) : part.text;
-                            tempHtml += `<span style="color: ${part.color};">${textToAppend}</span>`;
-                        }
-                        currentTextElement.innerHTML = tempHtml;
-                        setTimeout(typeWriter, deleteSpeed);
-                    } else {
-                        // Finished deleting current part
-                        currentPartIndex--;
-                        if (currentPartIndex < 0) {
-                            // All parts deleted, start typing again
-                            currentPartIndex = 0;
-                            isDeleting = false;
-                            setTimeout(typeWriter, pauseBeforeType);
-                        } else {
-                            // Move to previous part for deletion
-                            charIndexInPart = parts[currentPartIndex].text.length;
-                            setTimeout(typeWriter, deleteSpeed);
-                        }
-                    }
+        function animateText() {
+            const currentPhrase = phrases[phraseIndex];
+            const fullText = currentPhrase.text;
+            let timeoutSpeed = isDeleting ? deletingSpeed : typingSpeed;
+
+            if (isDeleting) {
+                charIndex--;
+            } else {
+                charIndex++;
+            }
+
+            let displayText = fullText.substring(0, charIndex);
+
+            if (currentPhrase.isComplex) {
+                const remotePart = 'Remote';
+                if (charIndex > remotePart.length) {
+                    displayText = `<span class="remote-color">${remotePart}</span><span class="ruler-color">${fullText.substring(remotePart.length, charIndex)}</span>`;
                 } else {
-                    // Typing text
-                    if (charIndexInPart < currentPart.text.length) {
-                        const char = currentPart.text.charAt(charIndexInPart);
-                        let tempHtml = '';
-                        for (let p = 0; p < currentPartIndex; p++) {
-                            const part = parts[p];
-                            tempHtml += `<span style="color: ${part.color};">${part.text}</span>`;
-                        }
-                        tempHtml += `<span style="color: ${currentPart.color};">${currentPart.text.substring(0, charIndexInPart + 1)}</span>`;
-                        currentTextElement.innerHTML = tempHtml;
-                        charIndexInPart++;
-                        setTimeout(typeWriter, speed);
-                    } else {
-                        // Finished typing current part
-                        currentPartIndex++;
-                        if (currentPartIndex >= parts.length) {
-                            // All parts typed, start deleting
-                            currentPartIndex = parts.length - 1; // Set to last part for deletion
-                            isDeleting = true;
-                            setTimeout(typeWriter, pauseBeforeDelete);
-                        } else {
-                            // Move to next part for typing
-                            charIndexInPart = 0;
-                            setTimeout(typeWriter, speed);
-                        }
-                    }
+                    displayText = `<span class="remote-color">${fullText.substring(0, charIndex)}</span>`;
                 }
             }
 
-            window.onload = typeWriter;
-        </script>
-        <a href="clock.html" class="hub-button">Digital Clock</a>
-        <a href="time_calculator.html" class="hub-button">Time Calculator</a>
-        <a href="age_calculator.html" class="hub-button">Age Calculator</a>
-        <a href="dead_calculator.html" class="hub-button">Dead Calculator</a>
-        <a href="location.html" class="hub-button">Location Tracker</a>
-        <a href="salat_times.html" class="hub-button">Salat Times</a>
-    </div>
+            titleElement.innerHTML = displayText;
+
+            if (!isDeleting && charIndex === fullText.length) {
+                isDeleting = true;
+                timeoutSpeed = pauseBetweenPhrases;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                timeoutSpeed = 500;
+            }
+
+            setTimeout(animateText, timeoutSpeed);
+        }
+
+        window.onload = animateText;
+    </script>
 </body>
 </html>

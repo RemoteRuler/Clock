@@ -1,14 +1,21 @@
 body {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Use min-height for better responsiveness */
-    background-color: #2c2c2c;
+    min-height: 100vh;
+    background-color: #f4f7f9;
     margin: 0;
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Modern font stack */
+    font-family: 'JetBrains Mono', monospace;
+    color: #333;
     overflow-x: hidden;
-    padding: 20px; /* Add some padding for smaller screens */
-    box-sizing: border-box; /* Include padding in element's total width and height */
+    padding: 20px;
+    box-sizing: border-box;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 .main-content-container {
@@ -16,208 +23,281 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 5vw 8vw; /* Use viewport width for padding */
-    border-radius: 10px;
-    background: #3a3a3a;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     max-width: 90%;
     width: fit-content;
+    text-align: center;
 }
 
 .logo {
-    width: 20vw; /* Use viewport width for logo size */
-    max-width: 100px; /* Set a maximum size for the logo */
-    height: auto;
-    margin-bottom: 3vw;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
     border-radius: 50%;
+    object-fit: cover;
+}
+
+h2 {
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.brand-title {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.remote-color {
+    color: #DB4437;
+}
+
+.ruler-color {
+    color: #4285F4;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    animation: zoom-in-out 3s ease-in-out infinite;
+}
+
+@keyframes zoom-in-out {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .digital-clock {
-    font-family: 'Space Mono', monospace;
-    font-size: 8vw;
-    font-weight: 500;
-    color: #e0e0e0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 700;
+    color: #2c3e50;
     text-align: center;
-    letter-spacing: 0.2vw;
+    letter-spacing: 2px;
     white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
-/* Specific styles for Time Calculator */
-.time-calculator-controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.time-calculator-controls input[type="time"], .time-calculator-controls select {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #444;
-    color: #e0e0e0;
-    font-size: 1em;
-    width: 150px;
-    text-align: center;
-}
-
-.time-calculator-result {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.5em;
-    color: #e0e0e0;
-    text-align: center;
-}
-
-/* Specific styles for Age Calculator */
-.age-calculator-controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.age-calculator-controls input[type="date"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #444;
-    color: #e0e0e0;
-    font-size: 1em;
+/* Input and result styling */
+input[type="time"], input[type="date"], select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
+    background-color: #f4f7f9;
+    color: #333;
+    font-size: 1rem;
     width: 180px;
     text-align: center;
+    transition: border-color 0.2s ease;
+    pointer-events: auto; /* Allow interaction for inputs */
+    user-select: auto; /* Allow selection for inputs */
 }
 
-.age-calculator-result {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.2em;
-    color: #e0e0e0;
+input[type="time"]:focus, input[type="date"]:focus, select:focus {
+    outline: none;
+    border-color: #2c3e50;
+}
+
+.time-calculator-result, .age-calculator-result, .dead-calculator-result, .location-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    color: #2c3e50;
     text-align: center;
+    margin-top: 20px;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
-/* Specific styles for Dead Calculator */
-.dead-calculator-controls {
+/* Controls container */
+.time-calculator-controls, .age-calculator-controls, .dead-calculator-controls {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-.dead-calculator-controls input[type="date"] {
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #444;
-    color: #e0e0e0;
-    font-size: 1em;
-    width: 180px;
-    text-align: center;
-}
-
-.dead-calculator-result {
-    font-family: 'Space Mono', monospace;
-    font-size: 1.2em;
-    color: #e0e0e0;
-    text-align: center;
-}
-
-/* Specific styles for Location */
-.location-display {
-    font-family: 'Space Mono', monospace;
-    font-size: 1em;
-    color: #e0e0e0;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.location-display p {
-    margin: 5px 0;
+/* Hub container */
+.hub-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
 }
 
 /* General button styling */
-button {
-    background-color: #2C3E50; /* Dark blue from logo */
-    color: #8B0000; /* Dark red text */
+button, .hub-button {
+    color: #ffffff;
     border: none;
-    padding: 15px 30px;
+    padding: 15px 20px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2em;
-    font-weight: 600;
-    transition: all 0.2s ease-in-out; /* Faster, smoother transition */
-    width: 250px;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.2s ease-in-out;
     text-align: center;
-    text-decoration: none; /* Remove underline for links */
-    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.3), -6px -6px 12px rgba(255, 255, 255, 0.05); /* Softer, more integrated shadow */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+    text-decoration: none;
+    background-color: #2c3e50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    pointer-events: auto; /* Allow interaction for buttons */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
-button:hover {
-    background-color: #34495e; /* Slightly lighter dark blue on hover */
-    box-shadow: 8px 8px 16px rgba(0, 0, 0, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.1); /* More pronounced shadow on hover */
-    transform: translateY(-3px); /* More noticeable lift */
+button:hover, .hub-button:hover {
+    background-color: #34495e;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
 }
 
-button:active {
-    transform: translateY(0); /* Press down effect */
-    box-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.4), inset -3px -3px 7px rgba(255, 255, 255, 0.1); /* Inset shadow on click */
+button:active, .hub-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Media Queries for specific adjustments */
+/* Media Queries for Responsive Design */
 
-/* Media Queries for specific adjustments */
-
-/* For screens smaller than 600px (e.g., phones) */
+/* For extra small devices (phones, 600px and down) */
 @media (max-width: 600px) {
     .main-content-container {
-        padding: 8vw 10vw;
+        padding: 20px;
     }
 
-    .logo {
-        width: 30vw;
-        max-width: 80px;
-        margin-bottom: 5vw;
+    h2 {
+        font-size: 1.8rem;
     }
 
     .digital-clock {
-        font-size: 10vw;
-        letter-spacing: 0.3vw;
+        font-size: 2.5rem;
     }
 
-    .time-calculator-controls input[type="time"],
-    .age-calculator-controls input[type="date"],
-    .dead-calculator-controls input[type="date"] {
-        width: 100%; /* Full width on small screens */
-        margin-bottom: 10px;
+    .hub-container {
+        grid-template-columns: 1fr;
     }
 
-    button {
-        width: 80%; /* Make buttons wider */
+    button, .hub-button {
+        padding: 12px 15px;
+        font-size: 0.9rem;
     }
 }
 
-/* For screens larger than 1200px (e.g., large desktops) */
-@media (min-width: 1200px) {
+/* For small devices (portrait tablets and large phones, 600px and up) */
+@media (min-width: 601px) and (max-width: 768px) {
     .main-content-container {
-        padding: 30px 50px;
+        padding: 30px;
     }
 
-    .logo {
-        width: 100px;
-        margin-bottom: 20px;
+    h2 {
+        font-size: 2rem;
     }
 
     .digital-clock {
-        font-size: 60px;
-        letter-spacing: 2px;
+        font-size: 3.5rem;
     }
 
-    .time-calculator-controls input[type="time"],
-    .age-calculator-controls input[type="date"],
-    .dead-calculator-controls input[type="date"] {
-        width: 150px; /* Revert to fixed width */
+    .hub-container {
+        grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* For medium devices (landscape tablets, 769px and up) */
+@media (min-width: 769px) and (max-width: 992px) {
+    .hub-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* For large devices (laptops/desktops, 993px and up) */
+@media (min-width: 993px) {
+    .hub-container {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 900px;
+    }
+}
+
+.salat-times-container {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.salat-times-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.salat-times-container li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #dfe6e9;
+}
+
+.salat-times-container li:last-child {
+    border-bottom: none;
+}
+
+.error-message {
+    color: #DB4437;
+    font-weight: 500;
+}
+
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #2c3e50;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.copyright-footer {
+    margin-top: auto; /* Push to the bottom */
+    text-align: center;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    padding-top: 20px; /* Add some padding above the footer */
 }

@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salat Times</title>
+    <title>Salat Times - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/adhan@4.0.0/dist/adhan.min.js"></script>
 </head>
 <body>
     <div class="main-content-container">
         <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
         <h2>Salat Times</h2>
-        <button id="get-salat-times">Search Salat Times on Google</button>
-        <div class="location-info" style="margin-top: 10px; color: #e0e0e0; font-size: 0.9em;"></div>
+        <button id="get-salat-times">Get My Salat Times</button>
+        <div id="salat-times-container" class="salat-times-container"></div>
     </div>
     <script src="salat_times_script.js"></script>
+    <footer class="copyright-footer">
+        <p>&copy; Remote Ruler. All rights reserved.</p>
+    </footer>
 </body>
 </html>
