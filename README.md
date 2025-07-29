@@ -19,9 +19,9 @@ To set up and run Remote Ruler on your local machine, follow these straightforwa
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/RemoteRuler/Clock.git
+    git clone https://github.com/RemoteRuler/Clock-main.git
     ```
-    (Replace `https://github.com/RemoteRuler/Clock.git` with the actual repository URL if different)
+    (Replace `https://github.com/RemoteRuler/Clock-main.git` with the actual repository URL if different)
 
 2.  **Navigate to the Project Directory:**
     ```bash
