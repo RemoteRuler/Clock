@@ -6,16 +6,112 @@
     <title>Salat Times - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/adhan@4.0.0/dist/adhan.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+        .main-content-container {
+            width: 90%;
+            max-width: 550px;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 4px rgba(60,64,67,0.15);
+        }
+        .header-info {
+            margin-bottom: 25px;
+        }
+        .header-info h2 {
+            margin-bottom: 5px;
+        }
+        .header-info p {
+            margin: 0;
+            color: #5f6368;
+            font-size: 1.1em;
+        }
+        .salat-times-card {
+            margin: 20px 0;
+            text-align: left;
+        }
+        .prayer-row {
+            margin: 16px 0;
+            font-size: 1.15em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e8eaed;
+            padding-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+        .prayer-row:last-child {
+            border-bottom: none;
+        }
+        .prayer-row.next-prayer {
+            background-color: #e8f0fe; /* Light Google Blue background */
+            padding: 10px;
+            border-radius: 8px;
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        .prayer-row strong {
+            color: #3c4043;
+        }
+        .prayer-row span {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #1a73e8; /* Google Blue */
+        }
+        .action-button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 500;
+            font-family: 'Google Sans', sans-serif;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #dadce0;
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+        .action-button:hover {
+            background-color: #f1f3f4;
+        }
+        #status-message {
+            margin-top: 20px;
+            color: #5f6368;
+            min-height: 24px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-content-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
-        <h2>Salat Times</h2>
-        <button id="get-salat-times">Get My Salat Times</button>
-        <div id="salat-times-container" class="salat-times-container"></div>
+        <a href="index.html">
+            <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        </a>
+        <div class="header-info">
+            <h2>Salat Times</h2>
+            <p id="date-display"></p>
+        </div>
+
+        <div id="salat-times-container" class="salat-times-card">
+            <!-- Prayer times will be injected here -->
+        </div>
+
+        <div id="status-message"></div>
+
+        <button id="refresh-times" class="action-button">Refresh</button>
     </div>
+
     <script src="salat_times_script.js"></script>
+
     <footer class="copyright-footer">
         <p>&copy; Remote Ruler. All rights reserved.</p>
     </footer>

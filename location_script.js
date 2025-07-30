@@ -1,67 +1,77 @@
-// Location Logic
-const latitudeDisplay = document.getElementById('latitude-display');
-const longitudeDisplay = document.getElementById('longitude-display');
-const accuracyDisplay = document.getElementById('accuracy-display');
-const getLocationBtn = document.getElementById('get-location');
-const googleMapsIcon = document.getElementById('google-maps-icon');
+document.addEventListener('DOMContentLoaded', () => {
+    const latitudeDisplay = document.getElementById('latitude-display');
+    const longitudeDisplay = document.getElementById('longitude-display');
+    const accuracyDisplay = document.getElementById('accuracy-display');
+    const refreshBtn = document.getElementById('refresh-location');
+    const googleMapsBtn = document.getElementById('google-maps-btn');
+    const statusMessage = document.getElementById('status-message');
 
-let currentLatitude = 'N/A';
-let currentLongitude = 'N/A';
+    let currentCoordinates = null;
 
-function getLocation() {
-    if (navigator.geolocation) {
+    function setStatus(message, isError = false) {
+        statusMessage.textContent = message;
+        statusMessage.style.color = isError ? '#ff6b6b' : '#999';
+    }
+
+    function getLocation() {
+        setStatus('Locating...');
+        googleMapsBtn.disabled = true;
+
+        if (!navigator.geolocation) {
+            setStatus('Geolocation is not supported by your browser.', true);
+            return;
+        }
+
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                currentLatitude = position.coords.latitude.toFixed(5);
-                currentLongitude = position.coords.longitude.toFixed(5);
+                currentCoordinates = position.coords;
+                const { latitude, longitude, accuracy } = currentCoordinates;
 
-                latitudeDisplay.textContent = currentLatitude;
-                longitudeDisplay.textContent = currentLongitude;
-                accuracyDisplay.textContent = position.coords.accuracy.toFixed(2);
-
-                googleMapsIcon.style.display = 'block'; // Show the icon once location is obtained
+                latitudeDisplay.textContent = latitude.toFixed(5);
+                longitudeDisplay.textContent = longitude.toFixed(5);
+                accuracyDisplay.textContent = `${accuracy.toFixed(1)}m`;
+                
+                googleMapsBtn.disabled = false;
+                setStatus('Location successfully updated.');
             },
             (error) => {
-                let errorMessage = 'Error getting location: ';
-                switch(error.code) {
+                let msg = 'An unknown error occurred.';
+                switch (error.code) {
                     case error.PERMISSION_DENIED:
-                        errorMessage += 'User denied the request for Geolocation.';
+                        msg = 'You denied the request for Geolocation.';
                         break;
                     case error.POSITION_UNAVAILABLE:
-                        errorMessage += 'Location information is unavailable.';
+                        msg = 'Location information is unavailable.';
                         break;
                     case error.TIMEOUT:
-                        errorMessage += 'The request to get user location timed out.';
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        errorMessage += 'An unknown error occurred.';
+                        msg = 'The request to get user location timed out.';
                         break;
                 }
+                setStatus(`Error: ${msg}`, true);
+                currentCoordinates = null;
                 latitudeDisplay.textContent = 'N/A';
                 longitudeDisplay.textContent = 'N/A';
-                accuracyDisplay.textContent = errorMessage;
-                googleMapsIcon.style.display = 'none'; // Hide icon on error
+                accuracyDisplay.textContent = 'N/A';
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
             }
         );
-    } else {
-        latitudeDisplay.textContent = 'Geolocation is not supported by this browser.';
-        longitudeDisplay.textContent = 'N/A';
-        accuracyDisplay.textContent = 'N/A';
-        googleMapsIcon.style.display = 'none'; // Hide icon if not supported
     }
-}
 
-function openGoogleMaps() {
-    if (currentLatitude !== 'N/A' && currentLongitude !== 'N/A') {
-        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${currentLatitude},${currentLongitude}`;
-        window.open(mapUrl, '_blank');
-    } else {
-        alert('Please get your location first.');
+    function openGoogleMaps() {
+        if (currentCoordinates) {
+            const { latitude, longitude } = currentCoordinates;
+            const mapUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+            window.open(mapUrl, '_blank');
+        }
     }
-}
 
-getLocationBtn.addEventListener('click', getLocation);
-googleMapsIcon.addEventListener('click', openGoogleMaps);
+    refreshBtn.addEventListener('click', getLocation);
+    googleMapsBtn.addEventListener('click', openGoogleMaps);
 
-// Initially hide the Google Maps icon
-googleMapsIcon.style.display = 'none';
+    // Automatically fetch location on page load
+    getLocation();
+});

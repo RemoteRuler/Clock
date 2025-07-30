@@ -6,16 +6,82 @@
     <title>Age Calculator - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Re-using the Google-inspired theme from other pages */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+        .main-content-container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 3px rgba(60,64,67,0.15);
+        }
+        .age-calculator-controls { /* Keep old class for JS compatibility */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .age-calculator-controls label {
+            font-size: 1.1em;
+            color: #5f6368;
+        }
+        .age-calculator-controls input[type="date"] {
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .action-button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 500;
+            font-family: 'Google Sans', sans-serif;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            background-color: #1a73e8;
+            color: white;
+        }
+        .action-button:hover {
+            background-color: #1865c9;
+        }
+        .age-calculator-result { /* Keep old class for JS compatibility */
+            margin-top: 25px;
+            font-size: 1.2em;
+            color: #1a73e8;
+            font-weight: 700;
+            min-height: 25px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-content-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        <a href="index.html">
+            <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        </a>
         <h2>Age Calculator</h2>
+        
         <div class="age-calculator-controls">
-            <label for="birth-date">Date of Birth:</label>
+            <label for="birth-date">Select Your Date of Birth</label>
             <input type="date" id="birth-date">
-            <button id="calculate-age">Calculate Age</button>
+            <button id="calculate-age" class="action-button">Calculate Age</button>
         </div>
+
         <div class="age-calculator-result"></div>
     </div>
     <script src="age_calculator_script.js"></script>

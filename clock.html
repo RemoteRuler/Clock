@@ -6,13 +6,57 @@
     <title>Digital Clock - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+        .main-content-container {
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 4px rgba(60,64,67,0.15);
+        }
+        .clock-display-card {
+            margin: 20px 0;
+        }
+        #time-display {
+            font-size: 5em;
+            font-weight: 700;
+            color: #1a73e8; /* Google Blue */
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        #date-display {
+            font-size: 1.4em;
+            color: #5f6368;
+        }
+    </style>
 </head>
 <body>
     <div class="main-content-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
-        <div class="digital-clock"></div>
+        <a href="index.html">
+            <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        </a>
+        
+        <div class="clock-display-card">
+            <div id="time-display"></div>
+            <div id="date-display"></div>
+        </div>
+
     </div>
+
     <script src="clock_script.js"></script>
+
     <footer class="copyright-footer">
         <p>&copy; Remote Ruler. All rights reserved.</p>
     </footer>

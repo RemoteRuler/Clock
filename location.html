@@ -6,20 +6,109 @@
     <title>Location Tracker - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa; /* Google-style light gray background */
+            color: #3c4043; /* Dark charcoal text */
+        }
+        .main-content-container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            background-color: #ffffff; /* White card */
+            padding: 30px 40px;
+            border-radius: 8px;
+            border: 1px solid #dadce0; /* Subtle border */
+            box-shadow: 0 1px 3px rgba(60,64,67,0.15);
+        }
+        .location-card {
+            margin: 20px 0;
+        }
+        .location-card p {
+            margin: 12px 0;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+        }
+        .location-card span {
+            font-weight: 700;
+            color: #1a73e8; /* Google Blue */
+            min-width: 100px;
+            text-align: left;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .action-button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 500;
+            font-family: 'Google Sans', sans-serif; /* Mimic Google's font */
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        #refresh-location {
+            background-color: #f8f9fa;
+            border-color: #dadce0;
+            color: #3c4043;
+        }
+        #refresh-location:hover {
+            background-color: #f1f3f4;
+        }
+        #google-maps-btn {
+            background-color: #1a73e8; /* Google Blue */
+            color: white;
+        }
+        #google-maps-btn:hover {
+            background-color: #1865c9;
+            box-shadow: 0 1px 3px 1px rgba(66,133,244,0.3);
+        }
+        #google-maps-btn:disabled {
+            background-color: #f1f3f4;
+            border-color: #dadce0;
+            color: #bdc1c6;
+            cursor: not-allowed;
+        }
+        #status-message {
+            margin-top: 20px;
+            color: #5f6368;
+            min-height: 24px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-content-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
-        <h2>Your Location</h2>
-        <div class="location-display">
+        <a href="index.html">
+            <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        </a>
+        <h2>Location Dashboard</h2>
+
+        <div class="location-card">
             <p>Latitude: <span id="latitude-display">N/A</span></p>
             <p>Longitude: <span id="longitude-display">N/A</span></p>
-            <p>Accuracy: <span id="accuracy-display">N/A</span> meters</p>
+            <p>Accuracy: <span id="accuracy-display">N/A</span></p>
         </div>
-        <img src="https://www.google.com/images/branding/product/2x/maps_96dp.png" alt="Google Maps Icon" id="google-maps-icon" style="width: 50px; height: 50px; cursor: pointer; margin-top: 10px;">
-        <button id="get-location">Get My Location</button>
+
+        <div id="status-message"></div>
+
+        <div class="action-buttons">
+            <button id="refresh-location" class="action-button">Refresh</button>
+            <button id="google-maps-btn" class="action-button" disabled>Show on Google Maps</button>
+        </div>
     </div>
+
     <script src="location_script.js"></script>
+
     <footer class="copyright-footer">
         <p>&copy; Remote Ruler. All rights reserved.</p>
     </footer>

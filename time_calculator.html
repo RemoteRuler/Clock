@@ -6,11 +6,74 @@
     <title>Time Calculator - Remote Ruler</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Re-using the Google-inspired theme from other pages */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #3c4043;
+        }
+        .main-content-container {
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            border: 1px solid #dadce0;
+            box-shadow: 0 1px 3px rgba(60,64,67,0.15);
+        }
+        .time-calculator-controls { /* Keep old class for JS compatibility */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .time-calculator-controls input[type="time"],
+        .time-calculator-controls select {
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 1.2em; /* Larger font for time */
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .action-button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 500;
+            font-family: 'Google Sans', sans-serif;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            background-color: #1a73e8;
+            color: white;
+        }
+        .action-button:hover {
+            background-color: #1865c9;
+        }
+        .time-calculator-result { /* Keep old class for JS compatibility */
+            margin-top: 25px;
+            font-size: 1.5em;
+            color: #1a73e8;
+            font-weight: 700;
+            min-height: 25px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-content-container">
-        <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        <a href="index.html">
+            <img src="https://raw.githubusercontent.com/RemoteRuler/Website/main/Logo/Remote_Ruler.png" alt="Remote Ruler Logo" class="logo">
+        </a>
         <h2>Time Calculator</h2>
+        
         <div class="time-calculator-controls">
             <input type="time" id="time-input-1" value="00:00">
             <select id="operation">
@@ -18,8 +81,9 @@
                 <option value="subtract">-</option>
             </select>
             <input type="time" id="time-input-2" value="00:00">
-            <button id="calculate-time">Calculate</button>
+            <button id="calculate-time" class="action-button">Calculate</button>
         </div>
+
         <div class="time-calculator-result">Result: 00:00</div>
     </div>
     <script src="time_calculator_script.js"></script>

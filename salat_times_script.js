@@ -1,95 +1,121 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const getSalatTimesBtn = document.getElementById('get-salat-times');
+    const dateDisplay = document.getElementById('date-display');
     const salatTimesContainer = document.getElementById('salat-times-container');
+    const statusMessage = document.getElementById('status-message');
+    const refreshBtn = document.getElementById('refresh-times');
 
-    const displayError = (message) => {
-        salatTimesContainer.innerHTML = `<p class="error-message">${message}</p>`;
-    };
+    // Set current date
+    dateDisplay.textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-    const displayLoading = () => {
-        salatTimesContainer.innerHTML = '<div class="loader"></div>';
-    };
+    function setStatus(message, isError = false) {
+        statusMessage.textContent = message;
+        statusMessage.style.color = isError ? '#d93025' : '#5f6368';
+    }
 
-    const displaySalatTimes = (timings) => {
+    function highlightNextPrayer(timings) {
+        const now = new Date();
         const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-        let html = '<ul>';
+        let nextPrayerName = null;
+
+        for (const prayer of prayerNames) {
+            const prayerTimeStr = timings[prayer].split(' ')[0];
+            const [hours, minutes] = prayerTimeStr.split(':');
+            const prayerTime = new Date();
+            prayerTime.setHours(hours, minutes, 0, 0);
+
+            if (prayerTime > now) {
+                nextPrayerName = prayer;
+                break;
+            }
+        }
+
+        if (!nextPrayerName) {
+            nextPrayerName = 'Fajr'; // Next prayer is Fajr of the next day
+        }
+
+        document.querySelectorAll('.prayer-row').forEach(row => {
+            row.classList.remove('next-prayer');
+            if (row.dataset.prayer === nextPrayerName) {
+                row.classList.add('next-prayer');
+            }
+        });
+    }
+
+    function displaySalatTimes(timings) {
+        const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+        let html = '';
         prayerNames.forEach(prayer => {
             if (timings[prayer]) {
-                // Convert to 12-hour format
                 const timeString = timings[prayer].split(' ')[0];
                 const [hours, minutes] = timeString.split(':');
                 const date = new Date();
-                date.setHours(hours);
-                date.setMinutes(minutes);
+                date.setHours(hours, minutes);
                 const formattedTime = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-                html += `<li><strong>${prayer}:</strong> ${formattedTime}</li>`;
+                html += `<div class="prayer-row" data-prayer="${prayer}"><strong>${prayer}</strong> <span>${formattedTime}</span></div>`;
             }
         });
-        html += '</ul>';
         salatTimesContainer.innerHTML = html;
-    };
+        highlightNextPrayer(timings);
+    }
 
-    const getSalatTimes = (latitude, longitude) => {
+    function fetchSalatTimes(latitude, longitude) {
+        setStatus('Fetching prayer times...');
         const date = new Date();
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         const day = date.getDate();
-        const method = 2; // ISNA
-        const school = 1; // Hanafi
-
-        const apiUrl = `https://api.aladhan.com/v1/timings/${day}-${month}-${year}?latitude=${latitude}&longitude=${longitude}&method=${method}&school=${school}`;
+        // Using the calendar endpoint for better reliability
+        const apiUrl = `https://api.aladhan.com/v1/calendar?latitude=${latitude}&longitude=${longitude}&method=2&month=${month}&year=${year}`;
 
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok.');
+                    throw new Error(`Network error: Could not reach the prayer times service.`);
                 }
                 return response.json();
             })
             .then(data => {
-                if (data.code === 200) {
-                    displaySalatTimes(data.data.timings);
+                if (data.code === 200 && data.data && data.data.length > 0) {
+                    // Find today's timings from the calendar data array
+                    const todaysData = data.data.find(d => d.date.gregorian.day == day);
+                    if (todaysData && todaysData.timings) {
+                        displaySalatTimes(todaysData.timings);
+                        setStatus('Prayer times loaded successfully.');
+                    } else {
+                        throw new Error('Could not find prayer times for today in the response.');
+                    }
                 } else {
-                    throw new Error(data.status || 'Could not fetch prayer times.');
+                    throw new Error(data.status || 'Invalid response from the prayer times service.');
                 }
             })
             .catch(error => {
-                console.error('Error fetching prayer times:', error);
-                displayError('Could not retrieve prayer times. Please try again later.');
+                console.error('Prayer Times Error:', error);
+                setStatus(`Error: ${error.message}`, true);
+                salatTimesContainer.innerHTML = ''; // Clear stale data
             });
-    };
+    }
 
-    const getLocation = () => {
-        if (navigator.geolocation) {
-            displayLoading();
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    getSalatTimes(latitude, longitude);
-                },
-                (error) => {
-                    let errorMessage = 'Error getting location: ';
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            errorMessage += 'Please allow location access.';
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            errorMessage += 'Location information is unavailable.';
-                            break;
-                        case error.TIMEOUT:
-                            errorMessage += 'Request for location timed out.';
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            errorMessage += 'An unknown error occurred.';
-                            break;
-                    }
-                    displayError(errorMessage);
-                }
-            );
-        } else {
-            displayError('Geolocation is not supported by this browser.');
+    function getLocationAndFetchTimes() {
+        setStatus('Getting your location...');
+        salatTimesContainer.innerHTML = ''; // Clear previous times
+        if (!navigator.geolocation) {
+            setStatus('Geolocation is not supported by your browser.', true);
+            return;
         }
-    };
 
-    getSalatTimesBtn.addEventListener('click', getLocation);
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                fetchSalatTimes(latitude, longitude);
+            },
+            (error) => {
+                setStatus('Could not get your location. Please allow location access and try again.', true);
+            }
+        );
+    }
+
+    refreshBtn.addEventListener('click', getLocationAndFetchTimes);
+
+    // Automatically fetch data on page load
+    getLocationAndFetchTimes();
 });

@@ -1,18 +1,29 @@
-// Digital Clock Logic
-function setDigitalClock() {
-    const now = new Date();
-    const seconds = now.getSeconds();
-    const minutes = now.getMinutes();
-    const hours = now.getHours();
+document.addEventListener('DOMContentLoaded', () => {
+    const timeDisplay = document.getElementById('time-display');
+    const dateDisplay = document.getElementById('date-display');
 
-    const digitalClockDisplay = document.querySelector('.digital-clock');
-    const digitalHours = hours % 12 || 12; // Convert to 12-hour format
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const digitalMinutes = minutes < 10 ? '0' + minutes : minutes;
-    const digitalSeconds = seconds < 10 ? '0' + seconds : seconds;
+    function updateClock() {
+        const now = new Date();
 
-    digitalClockDisplay.textContent = `${digitalHours}:${digitalMinutes}:${digitalSeconds} ${ampm}`;
-}
+        // Time
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+        const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+        const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+        timeDisplay.textContent = `${formattedHours}:${formattedMinutes}:${formattedSeconds} ${ampm}`;
 
-setInterval(setDigitalClock, 1000);
-setDigitalClock();
+        // Date
+        const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+        const date = now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        dateDisplay.textContent = `${day}, ${date}`;
+    }
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+
+    // Initial call to display the clock immediately
+    updateClock();
+});

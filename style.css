@@ -248,6 +248,62 @@ button:active, .hub-button:active {
     }
 }
 
+/* Responsive adjustments for all pages */
+@media (max-width: 768px) {
+    .main-content-container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+    }
+
+    .action-button, button, .hub-button {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+
+    #time-display {
+        font-size: 3.5em;
+    }
+
+    #date-display {
+        font-size: 1.2em;
+    }
+
+    .location-card p, .salat-times-card p {
+        font-size: 1em;
+    }
+
+    .prayer-row span {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    #time-display {
+        font-size: 2.8em;
+    }
+
+    #date-display {
+        font-size: 1em;
+    }
+
+    .hub-container {
+        grid-template-columns: 1fr;
+    }
+
+    .location-card p, .salat-times-card p {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+}
+
 .salat-times-container {
     margin-top: 20px;
     width: 100%;
