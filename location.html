@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Tracker - Remote Ruler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .location-card {
+            margin: 20px 0;
+        }
+        .location-card p {
+            margin: 12px 0;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+        }
+        .location-card span {
+            font-weight: 700;
+            color: var(--heading-color);
+            min-width: 100px;
+            text-align: left;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .action-button {
+            padding: 10px 24px;
+            font-size: 0.9em;
+            font-weight: 500;
+            font-family: 'JetBrains Mono', monospace;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        #refresh-location {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-primary);
+        }
+        #refresh-location:hover {
+            background-color: var(--card-bg);
+            border-color: var(--text-secondary);
+        }
+        #google-maps-btn {
+            background-color: var(--primary-action);
+            color: white;
+        }
+        #google-maps-btn:hover {
+            background-color: var(--primary-action-hover);
+        }
+        #google-maps-btn:disabled {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        #status-message {
+            margin-top: 20px;
+            color: var(--text-secondary);
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body class="theme-location">
+    <a href="index.html" class="back-link">← Home</a>
+    <div class="main-content-container">
+
+        <h2>Location Dashboard</h2>
+
+        <div class="location-card">
+            <p>Latitude: <span id="latitude-display">N/A</span></p>
+            <p>Longitude: <span id="longitude-display">N/A</span></p>
+            <p>Accuracy: <span id="accuracy-display">N/A</span></p>
+        </div>
+
+        <div id="status-message"></div>
+
+        <div class="action-buttons">
+            <button id="refresh-location" class="action-button">Refresh</button>
+            <button id="google-maps-btn" class="action-button" disabled>Show on Google Maps</button>
+        </div>
+    </div>
+
+    <script src="location_script.js"></script>
+
+    <footer class="copyright-footer">
+        <p>&copy; <span id="current-year"></span> Remote Ruler. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

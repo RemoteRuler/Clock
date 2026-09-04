@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock - Remote Ruler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .clock-display-card {
+            margin: 20px 0;
+        }
+        #time-display {
+            font-size: 5em;
+            font-weight: 700;
+            color: var(--heading-color);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        #date-display {
+            font-size: 1.4em;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body class="theme-clock">
+    <a href="index.html" class="back-link">← Home</a>
+    <div class="main-content-container">
+
+        
+        <div class="clock-display-card">
+            <div id="time-display"></div>
+            <div id="date-display"></div>
+        </div>
+
+    </div>
+
+    <script src="clock_script.js"></script>
+
+    <footer class="copyright-footer">
+        <p>&copy; <span id="current-year"></span> Remote Ruler. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

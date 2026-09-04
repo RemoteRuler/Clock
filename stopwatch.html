@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch - Remote Ruler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+
+        .stopwatch-card {
+            background: var(--card-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 20px;
+            padding: 40px 50px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px var(--card-shadow), 0 0 0 1px rgba(255,255,255,0.03) inset;
+            position: relative;
+        }
+        .stopwatch-card::before {
+            content: '';
+            position: absolute;
+            top: -80px; left: -80px;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(108,92,231,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .sw-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        /* Ring display */
+        .sw-ring-wrapper {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 0 auto 30px;
+        }
+        .sw-ring-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transform: rotate(-90deg);
+        }
+        .sw-ring-bg {
+            fill: none;
+            stroke: var(--input-border);
+            stroke-width: 5;
+        }
+        .sw-ring-progress {
+            fill: none;
+            stroke: url(#swGrad);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-dasharray: 659.73; /* 2*PI*105 */
+            stroke-dashoffset: 659.73;
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        /* Time display inside ring */
+        .sw-time-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .sw-time-main {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+            font-variant-numeric: tabular-nums;
+        }
+        .sw-time-ms {
+            font-size: 1.2rem;
+            color: var(--heading-color);
+            letter-spacing: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Buttons */
+        .sw-controls {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .sw-btn {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            pointer-events: auto;
+        }
+        #sw-start-stop {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 35% 35%, #7c6ef8, #6c5ce7);
+            color: #fff;
+            box-shadow: 0 8px 28px rgba(108,92,231,0.5), 0 0 0 8px rgba(108,92,231,0.12);
+        }
+        #sw-start-stop:hover {
+            box-shadow: 0 10px 36px rgba(108,92,231,0.7), 0 0 0 12px rgba(108,92,231,0.2);
+            transform: scale(1.05);
+        }
+        #sw-start-stop:active { transform: scale(0.95); }
+        #sw-start-stop.running {
+            background: radial-gradient(circle at 35% 35%, #e07070, #c0392b);
+            box-shadow: 0 8px 28px rgba(192,57,43,0.5), 0 0 0 8px rgba(192,57,43,0.12);
+        }
+        #sw-lap {
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--input-border);
+        }
+        #sw-lap:hover { background: var(--input-border); color: var(--text-primary); }
+        #sw-reset {
+            background: var(--input-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--input-border);
+        }
+        #sw-reset:hover { background: rgba(192,57,43,0.15); border-color: #c0392b; color: #f87171; }
+
+        /* Laps list */
+        .sw-laps {
+            max-height: 220px;
+            overflow-y: auto;
+            border-top: 1px solid var(--input-border);
+            padding-top: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--input-border) transparent;
+        }
+        .sw-laps::-webkit-scrollbar { width: 4px; }
+        .sw-laps::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 4px; }
+        .sw-laps:empty::after {
+            content: 'Laps will appear here';
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .lap-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 4px;
+            border-bottom: 1px solid var(--input-border);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            animation: lap-in 0.2s ease;
+        }
+        @keyframes lap-in {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .lap-num { color: var(--text-secondary); font-size: 0.75rem; }
+        .lap-time { font-weight: 700; color: var(--heading-color); }
+        .lap-delta { color: var(--text-secondary); font-size: 0.75rem; }
+
+        .lap-row.best  .lap-time { color: #2ecc71; }
+        .lap-row.worst .lap-time { color: #e74c3c; }
+
+        @media (max-width: 480px) {
+            .stopwatch-card { padding: 28px 20px; }
+            .sw-ring-wrapper { width: 200px; height: 200px; }
+            .sw-time-main { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body class="theme-stopwatch">
+    <a href="index.html" class="back-link">← Home</a>
+
+    <div class="main-content-container" style="background:transparent;box-shadow:none;padding:20px 0;">
+        <div class="stopwatch-card">
+            <div class="sw-title">⏱ Stopwatch</div>
+
+            <!-- Ring + time display -->
+            <div class="sw-ring-wrapper">
+                <svg class="sw-ring-svg" viewBox="0 0 240 240">
+                    <defs>
+                        <linearGradient id="swGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%"   style="stop-color:#6c5ce7;stop-opacity:1"/>
+                            <stop offset="100%" style="stop-color:#a29bfe;stop-opacity:1"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="sw-ring-bg"       cx="120" cy="120" r="105"/>
+                    <circle class="sw-ring-progress" cx="120" cy="120" r="105" id="sw-ring-circle"/>
+                </svg>
+                <div class="sw-time-display">
+                    <div class="sw-time-main" id="sw-time">00:00</div>
+                    <div class="sw-time-ms"   id="sw-ms">.000</div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="sw-controls">
+                <button class="sw-btn" id="sw-lap">Lap</button>
+                <button class="sw-btn" id="sw-start-stop">START</button>
+                <button class="sw-btn" id="sw-reset">Reset</button>
+            </div>
+
+            <!-- Laps -->
+            <div class="sw-laps" id="sw-laps"></div>
+        </div>
+    </div>
+
+    <footer class="copyright-footer">
+        <p>&copy; <span id="current-year"></span> Remote Ruler. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        const circumference = 2 * Math.PI * 105; // 659.73
+
+        const timeEl    = document.getElementById('sw-time');
+        const msEl      = document.getElementById('sw-ms');
+        const ringEl    = document.getElementById('sw-ring-circle');
+        const startBtn  = document.getElementById('sw-start-stop');
+        const lapBtn    = document.getElementById('sw-lap');
+        const resetBtn  = document.getElementById('sw-reset');
+        const lapsEl    = document.getElementById('sw-laps');
+
+        ringEl.style.strokeDasharray = circumference;
+
+        let startTime   = 0;
+        let elapsed     = 0;
+        let rafId       = null;
+        let running     = false;
+        let lapTimes    = [];
+        let lastLapTime = 0;
+
+        function formatTime(ms) {
+            const m  = Math.floor(ms / 60000);
+            const s  = Math.floor((ms % 60000) / 1000);
+            const ms3 = ms % 1000;
+            return {
+                main:  `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`,
+                ms:    `.${String(ms3).padStart(3,'0')}`
+            };
+        }
+
+        function updateDisplay(ms) {
+            const { main, ms: msStr } = formatTime(ms);
+            timeEl.textContent = main;
+            msEl.textContent   = msStr;
+
+            // Ring animates per 60-second cycle
+            const cycle = ms % 60000;
+            const offset = circumference * (1 - cycle / 60000);
+            ringEl.style.strokeDashoffset = offset;
+        }
+
+        function tick() {
+            elapsed = Date.now() - startTime;
+            updateDisplay(elapsed);
+            rafId = requestAnimationFrame(tick);
+        }
+
+        function start() {
+            startTime = Date.now() - elapsed;
+            rafId = requestAnimationFrame(tick);
+            running = true;
+            startBtn.textContent = 'STOP';
+            startBtn.classList.add('running');
+        }
+
+        function stop() {
+            cancelAnimationFrame(rafId);
+            running = false;
+            startBtn.textContent = 'START';
+            startBtn.classList.remove('running');
+        }
+
+        function reset() {
+            stop();
+            elapsed     = 0;
+            lastLapTime = 0;
+            lapTimes    = [];
+            updateDisplay(0);
+            lapsEl.innerHTML = '';
+            ringEl.style.strokeDashoffset = circumference;
+        }
+
+        function addLap() {
+            if (!running && elapsed === 0) return;
+            const lapMs    = elapsed - lastLapTime;
+            const lapTotal = elapsed;
+            lapTimes.push({ lap: lapMs, total: lapTotal });
+            lastLapTime = elapsed;
+
+            renderLaps();
+        }
+
+        function renderLaps() {
+            lapsEl.innerHTML = '';
+            const laps = lapTimes.slice().reverse();
+            const allLaps = lapTimes.map(l => l.lap);
+            const minLap  = Math.min(...allLaps);
+            const maxLap  = Math.max(...allLaps);
+
+            laps.forEach((entry, ri) => {
+                const i   = lapTimes.length - ri;
+                const row = document.createElement('div');
+                row.className = 'lap-row';
+                if (lapTimes.length > 1) {
+                    if (entry.lap === minLap) row.classList.add('best');
+                    if (entry.lap === maxLap) row.classList.add('worst');
+                }
+                const { main: lMain, ms: lMs } = formatTime(entry.lap);
+                const { main: tMain, ms: tMs } = formatTime(entry.total);
+                row.innerHTML = `
+                    <span class="lap-num">Lap ${i}</span>
+                    <span class="lap-time">${lMain}${lMs}</span>
+                    <span class="lap-delta">${tMain}${tMs}</span>
+                `;
+                lapsEl.appendChild(row);
+            });
+        }
+
+        startBtn.addEventListener('click', () => running ? stop() : start());
+        lapBtn.addEventListener('click',   addLap);
+        resetBtn.addEventListener('click', reset);
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Space')      { e.preventDefault(); running ? stop() : start(); }
+            if (e.code === 'KeyL')       { addLap(); }
+            if (e.code === 'KeyR')       { reset(); }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote Ruler - Time Tools Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="theme-hub">
+    <div class="main-content-container">
+
+        <h2 id="typing-title" class="brand-title"></h2>
+        <p class="subtitle">Your Modern Time Toolkit</p>
+        <div class="hub-container">
+            <a href="clock.html" class="hub-button">Digital Clock</a>
+            <a href="stopwatch.html" class="hub-button">Stopwatch</a>
+            <a href="age_calculator.html" class="hub-button">Age Calculator</a>
+            <a href="dead_calculator.html" class="hub-button">Dead Calculator</a>
+            <a href="location.html" class="hub-button">Location Tracker</a>
+            <a href="tasbih.html" class="hub-button">Tasbih Counter</a>
+        </div>
+    </div>
+    <footer class="copyright-footer">
+        <p>&copy; <span id="current-year"></span> Remote Ruler. All rights reserved.</p>
+    </footer>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+    <script>
+        const titleElement = document.getElementById('typing-title');
+        const phrases = [
+            { text: 'Welcome to', isComplex: false },
+            { text: 'Remote Ruler', isComplex: true }
+        ];
+        const typingSpeed = 100;
+        const deletingSpeed = 75;
+        const pauseBetweenPhrases = 2000; // Pause after typing/deleting
+
+        let phraseIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function animateText() {
+            const currentPhrase = phrases[phraseIndex];
+            const fullText = currentPhrase.text;
+            let timeoutSpeed = isDeleting ? deletingSpeed : typingSpeed;
+
+            if (isDeleting) {
+                charIndex--;
+            } else {
+                charIndex++;
+            }
+
+            let displayText = fullText.substring(0, charIndex);
+
+            if (currentPhrase.isComplex) {
+                const remotePart = 'Remote';
+                if (charIndex > remotePart.length) {
+                    displayText = `<span class="remote-color">${remotePart}</span><span class="ruler-color">${fullText.substring(remotePart.length, charIndex)}</span>`;
+                } else {
+                    displayText = `<span class="remote-color">${fullText.substring(0, charIndex)}</span>`;
+                }
+            }
+
+            titleElement.innerHTML = displayText;
+
+            if (!isDeleting && charIndex === fullText.length) {
+                isDeleting = true;
+                timeoutSpeed = pauseBetweenPhrases;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                timeoutSpeed = 500;
+            }
+
+            setTimeout(animateText, timeoutSpeed);
+        }
+
+        window.onload = animateText;
+    </script>
+</body>
+</html>

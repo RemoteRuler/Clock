@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasbih Counter - Remote Ruler</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald:   #1b6b45;
+            --emerald-light: #27ae74;
+            --gold:      #c9a227;
+            --gold-light:#f0c842;
+            --bg:        #0d1f17;
+            --card:      #122b1e;
+            --border:    #1e4433;
+            --text:      #e8f5ee;
+            --muted:     #7aad8e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at top, #0f2a1d 0%, #080f0b 100%);
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text);
+            padding: 20px;
+            user-select: none;
+            -webkit-user-select: none;
+            pointer-events: auto;
+        }
+
+
+
+        /* Card */
+        .tasbih-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 40px 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04) inset;
+            position: relative;
+            overflow: hidden;
+        }
+        .tasbih-card::before {
+            content: '';
+            position: absolute;
+            top: -60px; left: -60px;
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(39,174,116,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Arabic title */
+        .arabic-title {
+            font-family: 'Amiri', serif;
+            font-size: 2rem;
+            color: var(--gold-light);
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .page-subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        /* Dhikr selector */
+        .dhikr-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .dhikr-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+        .dhikr-btn:hover,
+        .dhikr-btn.active {
+            background: var(--emerald);
+            border-color: var(--emerald-light);
+            color: #fff;
+        }
+
+        /* Current dhikr display */
+        .dhikr-display {
+            font-family: 'Amiri', serif;
+            font-size: 1.45rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            min-height: 40px;
+            line-height: 1.6;
+            direction: rtl;
+        }
+        .dhikr-meaning {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 28px;
+            font-style: italic;
+        }
+
+        /* Bead ring SVG area */
+        .bead-ring-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 28px;
+        }
+        #bead-ring {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Counter number */
+        .count-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            letter-spacing: -2px;
+            line-height: 1;
+            margin-bottom: 6px;
+            text-shadow: 0 0 30px rgba(240,200,66,0.3);
+            transition: transform 0.08s ease;
+        }
+        .count-display.pulse {
+            transform: scale(1.12);
+        }
+        .count-target {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        /* Progress ring */
+        .progress-ring-wrapper {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+        #progress-ring-circle {
+            transition: stroke-dashoffset 0.3s ease;
+            transform-origin: center;
+            transform: rotate(-90deg);
+        }
+
+        /* TAP button */
+        .tap-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #27ae74, #1b6b45);
+            border: 3px solid rgba(39,174,116,0.4);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 8px 30px rgba(27,107,69,0.5), 0 0 0 8px rgba(27,107,69,0.15);
+            margin-bottom: 28px;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .tap-btn:hover {
+            box-shadow: 0 10px 40px rgba(27,107,69,0.7), 0 0 0 12px rgba(27,107,69,0.2);
+        }
+        .tap-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 4px 15px rgba(27,107,69,0.4);
+        }
+        .tap-btn .tap-label { font-size: 1.2rem; }
+        .tap-btn .tap-sub   { font-size: 0.65rem; color: rgba(255,255,255,0.7); }
+
+        /* Action buttons row */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .ctrl-btn {
+            flex: 1;
+            max-width: 120px;
+            padding: 10px 0;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04);
+            color: var(--muted);
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+            pointer-events: auto;
+        }
+        .ctrl-btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+        .ctrl-btn.danger:hover { background: rgba(220,50,50,0.15); border-color: #c03030; color: #f87171; }
+
+        /* Session stats */
+        .session-stats {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--gold-light);
+        }
+        .stat-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* TAP button wrapper — ripples live here, NOT inside the button */
+        .tap-btn-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* must NOT clip children */
+            overflow: visible;
+        }
+
+        /* Ripple ring — appended into .tap-btn-wrapper */
+        @keyframes ripple-out {
+            0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.65; }
+            100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0;    }
+        }
+        .ripple-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid var(--emerald-light);
+            width: 140px;
+            height: 140px;
+            pointer-events: none;
+            left: 50%;
+            top:  50%;
+            transform: translate(-50%, -50%);
+            animation: ripple-out 0.6s ease-out forwards;
+        }
+        .ripple-ring.delay {
+            border-color: rgba(39,174,116,0.35);
+            animation-delay: 0.12s;
+            animation-duration: 0.7s;
+        }
+
+        /* Button flash on tap */
+        @keyframes btn-flash {
+            0%   { box-shadow: 0 8px 30px rgba(27,107,69,0.5), 0 0 0 8px rgba(27,107,69,0.15), 0 0 0 0   rgba(39,174,116,0.7); }
+            40%  { box-shadow: 0 8px 30px rgba(27,107,69,0.7), 0 0 0 8px rgba(27,107,69,0.3), 0 0 28px 6px rgba(39,174,116,0.5); }
+            100% { box-shadow: 0 8px 30px rgba(27,107,69,0.5), 0 0 0 8px rgba(27,107,69,0.15), 0 0 0 0   rgba(39,174,116,0); }
+        }
+        .tap-btn.flashing {
+            animation: btn-flash 0.4s ease-out forwards;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--emerald);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 999;
+            white-space: nowrap;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Footer */
+        .copyright-footer {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #3a5c49;
+        }
+
+        @media (max-width: 480px) {
+            .tasbih-card { padding: 28px 20px 24px; }
+            .count-display { font-size: 3rem; }
+            .tap-btn { width: 120px; height: 120px; }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">← Home</a>
+
+    <div class="tasbih-card">
+        <div class="arabic-title">التسبيح</div>
+        <div class="page-subtitle">Digital Tasbih Counter</div>
+
+        <!-- Dhikr presets -->
+        <div class="dhikr-selector">
+            <button class="dhikr-btn active" data-dhikr="subhanallah" data-target="33">SubhanAllah</button>
+            <button class="dhikr-btn" data-dhikr="alhamdulillah" data-target="33">Alhamdulillah</button>
+            <button class="dhikr-btn" data-dhikr="allahuakbar" data-target="34">Allahu Akbar</button>
+            <button class="dhikr-btn" data-dhikr="istighfar" data-target="100">Istighfar</button>
+            <button class="dhikr-btn" data-dhikr="salawat" data-target="100">Salawat</button>
+            <button class="dhikr-btn" data-dhikr="custom" data-target="33">Custom</button>
+        </div>
+
+        <!-- Current dhikr text -->
+        <div class="dhikr-display" id="dhikr-arabic">سُبْحَانَ اللَّهِ</div>
+        <div class="dhikr-meaning" id="dhikr-meaning">Glory be to Allah</div>
+
+        <!-- Count number -->
+        <div class="count-display" id="count-display">0</div>
+        <div class="count-target" id="count-target">Target: 33</div>
+
+        <!-- Progress ring + Tap button -->
+        <div style="position:relative; display:flex; align-items:center; justify-content:center; margin-bottom:8px;">
+            <svg width="160" height="160" style="position:absolute; pointer-events:none;">
+                <circle cx="80" cy="80" r="70" fill="none" stroke="#1a3327" stroke-width="6"/>
+                <circle id="progress-ring-circle"
+                    cx="80" cy="80" r="70"
+                    fill="none"
+                    stroke="url(#progressGrad)"
+                    stroke-width="6"
+                    stroke-linecap="round"
+                    stroke-dasharray="439.82"
+                    stroke-dashoffset="439.82"/>
+                <defs>
+                    <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#27ae74;stop-opacity:1"/>
+                        <stop offset="100%" style="stop-color:#f0c842;stop-opacity:1"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="tap-btn-wrapper" id="tap-btn-wrapper">
+                <button class="tap-btn" id="tap-btn">
+                    <span class="tap-label">TAP</span>
+                    <span class="tap-sub">اضغط</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="action-row" style="margin-bottom:0;">
+            <button class="ctrl-btn" id="undo-btn">↩ Undo</button>
+            <button class="ctrl-btn" id="lap-btn">🔁 Lap</button>
+            <button class="ctrl-btn danger" id="reset-btn">✕ Reset</button>
+        </div>
+
+        <!-- Session stats -->
+        <div class="session-stats">
+            <div class="stat-box">
+                <div class="stat-value" id="total-display">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="rounds-display">0</div>
+                <div class="stat-label">Rounds</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="session-display">0</div>
+                <div class="stat-label">Session</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer class="copyright-footer">
+        <p>&copy; <span id="current-year"></span> Remote Ruler. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        // ── Dhikr data ──────────────────────────────────────────────────
+        const dhikrData = {
+            subhanallah:  { arabic: 'سُبْحَانَ اللَّهِ',         meaning: 'Glory be to Allah',            target: 33  },
+            alhamdulillah:{ arabic: 'الْحَمْدُ لِلَّهِ',          meaning: 'All praise is due to Allah',  target: 33  },
+            allahuakbar:  { arabic: 'اللَّهُ أَكْبَرُ',           meaning: 'Allah is the Greatest',       target: 34  },
+            istighfar:    { arabic: 'أَسْتَغْفِرُ اللَّهَ',        meaning: 'I seek forgiveness from Allah',target: 100 },
+            salawat:      { arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ', meaning: 'O Allah, send blessings upon Muhammad', target: 100 },
+            custom:       { arabic: '— Custom —',                  meaning: 'Set your own target below',   target: 33  }
+        };
+
+        // ── State ────────────────────────────────────────────────────────
+        let count       = 0;
+        let totalCount  = 0;
+        let rounds      = 0;
+        let sessionCount= 0;
+        let currentKey  = 'subhanallah';
+        let target      = 33;
+        let history     = [];
+
+        const circumference = 2 * Math.PI * 70; // r=70
+
+        // ── DOM refs ─────────────────────────────────────────────────────
+        const countEl     = document.getElementById('count-display');
+        const targetEl    = document.getElementById('count-target');
+        const arabicEl    = document.getElementById('dhikr-arabic');
+        const meaningEl   = document.getElementById('dhikr-meaning');
+        const totalEl     = document.getElementById('total-display');
+        const roundsEl    = document.getElementById('rounds-display');
+        const sessionEl   = document.getElementById('session-display');
+        const ring        = document.getElementById('progress-ring-circle');
+        const tapBtn      = document.getElementById('tap-btn');
+        const undoBtn     = document.getElementById('undo-btn');
+        const lapBtn      = document.getElementById('lap-btn');
+        const resetBtn    = document.getElementById('reset-btn');
+        const toast       = document.getElementById('toast');
+
+        // ── Helpers ──────────────────────────────────────────────────────
+        function updateRing() {
+            const fraction = Math.min(count / target, 1);
+            const offset   = circumference * (1 - fraction);
+            ring.style.strokeDashoffset = offset;
+        }
+
+        function renderCount() {
+            countEl.textContent    = count;
+            totalEl.textContent    = totalCount;
+            roundsEl.textContent   = rounds;
+            sessionEl.textContent  = sessionCount;
+            targetEl.textContent   = `Target: ${target}`;
+            updateRing();
+        }
+
+        function pulseCount() {
+            countEl.classList.remove('pulse');
+            void countEl.offsetWidth; // reflow
+            countEl.classList.add('pulse');
+            setTimeout(() => countEl.classList.remove('pulse'), 100);
+        }
+
+        const tapWrapper = document.getElementById('tap-btn-wrapper');
+
+        function spawnRipple() {
+            // First ring
+            const r1 = document.createElement('div');
+            r1.classList.add('ripple-ring');
+            tapWrapper.appendChild(r1);
+            r1.addEventListener('animationend', () => r1.remove());
+
+            // Second ring — slightly delayed, more transparent
+            const r2 = document.createElement('div');
+            r2.classList.add('ripple-ring', 'delay');
+            tapWrapper.appendChild(r2);
+            r2.addEventListener('animationend', () => r2.remove());
+
+            // Flash glow on the button itself
+            tapBtn.classList.remove('flashing');
+            void tapBtn.offsetWidth; // reflow to restart
+            tapBtn.classList.add('flashing');
+            tapBtn.addEventListener('animationend', () => tapBtn.classList.remove('flashing'), { once: true });
+        }
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function setDhikr(key) {
+            currentKey = key;
+            const d  = dhikrData[key];
+            target   = d.target;
+            arabicEl.textContent  = d.arabic;
+            meaningEl.textContent = d.meaning;
+            // Reset count on dhikr change
+            count = 0;
+            history = [];
+            renderCount();
+
+            document.querySelectorAll('.dhikr-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-dhikr="${key}"]`).classList.add('active');
+        }
+
+        // ── Core tap ─────────────────────────────────────────────────────
+        function tap() {
+            history.push(count);
+            count++;
+            totalCount++;
+            sessionCount++;
+
+            // Haptic feedback (mobile)
+            if (navigator.vibrate) navigator.vibrate(30);
+
+            pulseCount();
+            spawnRipple();
+            renderCount();
+
+            if (count >= target) {
+                rounds++;
+                count = 0;
+                history = [];
+                renderCount();
+                showToast(`🎉 Round ${rounds} complete! الله أكبر`);
+                if (navigator.vibrate) navigator.vibrate([50, 50, 100]);
+            }
+        }
+
+        // ── Undo ─────────────────────────────────────────────────────────
+        function undo() {
+            if (history.length === 0) return;
+            count = history.pop();
+            totalCount = Math.max(0, totalCount - 1);
+            sessionCount = Math.max(0, sessionCount - 1);
+            renderCount();
+        }
+
+        // ── Lap (complete current round manually) ─────────────────────
+        function lap() {
+            if (count === 0) return;
+            rounds++;
+            totalCount += (target - count);
+            sessionCount += (target - count);
+            count = 0;
+            history = [];
+            renderCount();
+            showToast(`Lap ${rounds} saved ✔`);
+        }
+
+        // ── Reset ─────────────────────────────────────────────────────────
+        function reset() {
+            count = 0;
+            totalCount = 0;
+            rounds = 0;
+            sessionCount = 0;
+            history = [];
+            renderCount();
+            showToast('Counter reset');
+        }
+
+        // ── Events ────────────────────────────────────────────────────────
+        tapBtn.addEventListener('click', tap);
+        undoBtn.addEventListener('click', undo);
+        lapBtn.addEventListener('click', lap);
+        resetBtn.addEventListener('click', reset);
+
+        // Keyboard: spacebar or Enter to tap
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                tap();
+            }
+            if (e.code === 'Backspace') undo();
+        });
+
+        // Dhikr buttons
+        document.querySelectorAll('.dhikr-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.dhikr;
+                if (key === 'custom') {
+                    const t = parseInt(prompt('Enter your custom target count:', '33'), 10);
+                    if (t && t > 0) {
+                        dhikrData.custom.target = t;
+                    }
+                }
+                setDhikr(key);
+            });
+        });
+
+        // ── Init ──────────────────────────────────────────────────────────
+        ring.style.strokeDasharray = circumference;
+        setDhikr('subhanallah');
+    </script>
+</body>
+</html>
